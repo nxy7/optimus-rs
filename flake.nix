@@ -30,6 +30,7 @@
           cargo-watch
           cargo-nextest
           nushell
+          zsh
         ];
       in {
         devShells.default = pkgs.mkShell {
