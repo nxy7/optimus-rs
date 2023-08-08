@@ -1,30 +1,32 @@
 global:
-  shell_cmd: nu -c
+  shell: nu
 include:
-  - ./config
+  # - ./config
   # - ./commands_optimus.yml
 
-start: 
-  description: |
-    Start the application
-  run: |
-    echo "sup"
-    docker compose -f compose.yml -f compose.dev.yml up -d  
+commands:
+  start: 
+    description: |
+      Start the application
+    run: |
+      echo "sup"
+      docker compose -f compose.yml -f compose.dev.yml up -d  
 
-e2e_tests: 
-  shell: nu -c
-  run: |
-    echo "test"
-    echo "multiline"
-  # file: ./e2e_tests.nu
+  e2e_tests: 
+    shell: bash
+    run: |
+      echo "test"
+      echo "multiline"
+    # file: ./e2e_tests.nu
+
+  lscmd:
+    root: ./config
+    run: |
+      ls
+  
 
 services:
   optimus:
     root: .
     test: |
-      go test ./...
-
-lscmd:
-  root: ./config
-  run: |
-    ls
+      cargo nextest

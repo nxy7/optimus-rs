@@ -1,0 +1,88 @@
+name: Tests
+on:
+  push:
+
+env:
+  CARGO_TERM_COLOR: always
+  SQLX_OFFLINE: true
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    # - name: Restore Nix Store
+    #   id: restore-nix-cache
+    #   uses: actions/cache/restore@v3
+    #   with:
+    #     path: |
+    #       /home/runner/nix
+    #     key: ${{ runner.os }}-${{ hashFiles('.') }}
+
+
+    # - name: Restore Incremental Builds
+    #   id: restore-cargo-cache
+    #   uses: actions/cache/restore@v3
+    #   with:
+    #     path: |
+    #       ~/.cargo/bin/
+    #       ~/.cargo/registry/index/
+    #       ~/.cargo/registry/cache/
+    #       ~/.cargo/git/db/
+    #       ./backend/target
+    #     key: ${{ runner.os }}-cargo-${{ hashFiles('./backend/Cargo.lock') }}
+
+    - uses: cachix/install-nix-action@v20
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+        extra_nix_config: |
+          # save space on disk and in cache
+          # auto-optimise-store = true
+          store = /home/runner/nix
+          # keep all store paths necessary to build the outputs
+          keep-outputs = true
+          keep-derivations = true
+
+    # - name: Download Nix Dependencies
+    #   run: |
+    #     nix develop .#core
+
+
+    - name: Run Tests
+      run: |
+        # cp .env.example .env
+        nix develop . -c cargo nextest r
+
+    # - name: Save Optimus Cache
+    #   # id: restore-optimus-cache
+    #   uses: actions/cache/save@v3
+    #   with:
+    #     path: |
+    #       ./optimus.cache
+    #     key: ${{ runner.os }}-${{ env.BRANCH_NAME }}
+
+
+
+    # - name: Save nix store
+    #   uses: actions/cache/save@v3
+    #   if: ${{ steps.restore-nix-cache.outputs.cache-hit == false }}
+    #   with:
+    #     key: ${{ runner.os }}-${{ hashFiles('./flake.nix', './flake.lock') }}
+    #     path: |
+    #       /home/runner/nix
+
+
+    # - name: Save incremental builds cache
+    #   uses: actions/cache/save@v3
+    #   if: ${{ steps.restore-cargo-cache.outputs.cache-hit == false }}
+    #   with:
+    #     key: ${{ runner.os }}-cargo-${{ hashFiles('./backend/Cargo.lock') }}
+    #     path: |
+    #       ~/.cargo/bin/
+    #       ~/.cargo/registry/index/
+    #       ~/.cargo/registry/cache/
+    #       ~/.cargo/git/db/
+    #       ./backend/target
+

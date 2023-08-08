@@ -1,6 +1,6 @@
 ![Optimus Prime](https://www.dexerto.com/cdn-cgi/image/width=3840,quality=75,format=auto/https://editors.dexerto.com/wp-content/uploads/2023/04/21/Transformers-1.jpg)
 
-# This is forked repo of optimus
+# This is alternative version of optimus
 I was trying to create optimus using golang, but ended up unhappy with how it turns out. This repository is made as experiment to get a feel for the same project structure built with Rust. 
 
 --------------------------------
